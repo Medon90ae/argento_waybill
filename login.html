@@ -174,39 +174,14 @@
                 <label>المدينة</label>
                 <select id="registerCity" required>
                     <option value="">اختر المدينة</option>
-                    <option value="Cairo">القاهرة</option>
-                    <option value="Giza">الجيزة</option>
-                    <option value="Alexandria">الإسكندرية</option>
-                    <option value="Sharqia">الشرقية</option>
-                    <option value="Dakahlia">الدقهلية</option>
-                    <option value="Gharbia">الغربية</option>
-                    <option value="Beheira">البحيرة</option>
-                    <option value="Qalyubia">القليوبية</option>
-                    <option value="Menoufia">المنوفية</option>
-                    <option value="Port Said">بورسعيد</option>
-                    <option value="Suez">السويس</option>
-                    <option value="Ismailia">الإسماعيلية</option>
-                    <option value="Damietta">دمياط</option>
-                    <option value="Kafr El Sheikh">كفر الشيخ</option>
-                    <option value="Beni Suef">بني سويف</option>
-                    <option value="Fayoum">الفيوم</option>
-                    <option value="Minya">المنيا</option>
-                    <option value="Assiut">أسيوط</option>
-                    <option value="Sohag">سوهاج</option>
-                    <option value="Qena">قنا</option>
-                    <option value="Luxor">الأقصر</option>
-                    <option value="Aswan">أسوان</option>
-                    <option value="Red Sea">البحر الأحمر</option>
-                    <option value="New Valley">الوادي الجديد</option>
-                    <option value="Matrouh">مطروح</option>
-                    <option value="North Sinai">شمال سيناء</option>
-                    <option value="South Sinai">جنوب سيناء</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label>المنطقة</label>
-                <input type="text" id="registerArea" placeholder="مثال: باب الشعرية" required>
+                <select id="registerArea" required disabled>
+                    <option value="">اختر المدينة أولاً</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -219,6 +194,106 @@
     </div>
 
     <script>
+        // بيانات المدن والمناطق الكاملة
+        const citiesData = {
+            "Cairo": ["Abdin", "El Abaseya", "Al Azbakeya", "El Katameya", "Al Manial", "El Mokattam", "Dar El Salam", "El Basatin", "El-Gamaleya", "Al Sayeda Zeinab", "Helwan", "Maadi", "Masr El Qadima", "Qasr El Nil", "El Khalifa", "Torah", "Zamalek", "El Shorouk", "Badr City", "Ain Shams", "Madinaty", "Al Zaitoun", "Nasr City", "New Cairo", "Heliopolis", "Al Amiriyyah", "El Salam", "El Waily", "Al Sharabeya", "Al Marj", "Al Matariyyah", "El Nozha", "Hadaeq Al Qubbah", "Shobra", "Nile Corniche", "Cairo"],
+            "Giza": ["6th of October City", "El Sheikh Zayed City", "Al Ayyat", "Al Hawamidiyya", "Badrshein", "El Saf", "Al Omraneya", "Atfih", "Bahariya Oasis", "Pyramids Gardens", "Faisal", "Haram", "Abu an Numros", "Al Agouzah", "Al Warak", "Awsīm", "Boulaq Ad Dakrour", "Al Doqi", "Ard El Lewa", "Mohandessin", "Kirdasah", "Imbabah", "Monshaet El Kanater", "Giza"],
+            "Alexandria": ["Ad Dakhilah", "Amreya", "Borg El Arab", "Moharam Bek", "Bab Sharqi", "Sidi Gabir", "Al Attarin", "Mansheya", "Al Labban", "El Gomrok", "Port al Basal", "Karmus", "Montaza 2", "Alexandria"],
+            "Luxor": ["Luxor", "Armant", "Esna", "Al Qarnah"],
+            "Aswan": ["Aswan", "Kom Ombo", "Daraw", "Edfu"],
+            "Red Sea": ["Hurghada", "Ras Ghareb", "Safaga", "Quseer", "Marsa Alam"],
+            "Assiut": ["Abnub", "Abu Tig", "Al Badari", "El Ghanayem", "El Fateh", "El Quseyya", "Dayrout", "Sahel Selim", "Sidfa", "Asyut", "Manfalut", "Manqabad"],
+            "Sohag": ["Tima", "Tahta", "Juhaynah", "El Maragha", "Sohag", "Akhmim", "Saqultah", "Al Minshah", "Girga", "Al Balyana", "Dar El Salam", "El Usayrat"],
+            "Qena": ["Qena", "Qus", "Madinet Qaft", "Dishna", "Naqadah", "Nagaa Hammadi", "Farshut", "Abu Tesht"],
+            "Minya": ["El Idwa", "Maghagha", "Bani Mazar", "Matai", "Samalut", "Minya", "Abu Qurqas", "Mallawi", "Dayr Mawas"],
+            "Beni Suef": ["Al Wasta", "Nasser", "Beni Suef", "Ihnasya Al Madinah", "Biba", "Sumusta El Waqf", "El Fashn"],
+            "Fayoum": ["Tamiya", "Sinnuris", "Faiyum", "Atsa", "Ibsheway", "Youssef Al Seddik"],
+            "Beheira": ["Damanhour", "Kafr El Dawar", "Abu Hummus", "El Mahmoudeya", "Natrn Valley", "Al Noubareya", "Abu Al Matamir", "Housh Eissa", "Itay Al Barud", "Shubrakhit", "Rosetta", "Idku", "Badr", "Ad Dilinjat", "AR Rahmaniyyah", "Kom Hamada"],
+            "Kafr El Sheikh": ["Kafr El Shaikh", "Desouk", "Fowa", "Mutubas", "Baltim", "El Hamool", "Riyadh", "Biyala", "Qillin", "Sidi Salem"],
+            "Gharbia": ["Kafr Az Zayyat", "El Mahalla El Kubra", "Samannoud", "Basyoun", "El Santa", "Zefta", "Kotoor", "Tanta"],
+            "Dakahlia": ["Mansoura", "Aga", "Al Manzalah", "Belqas", "Dikirnis", "El Senbellawein", "Menyet El Nasr", "Mit Ghamr", "Shirbin", "Talkha"],
+            "Sharqia": ["Bilbeis", "Inshas", "Awlad Saqr", "El Husseiniya", "Dyarb Negm", "Faqus", "Kafr Saqr", "Mashtul as Suq", "Minya Al Qamh", "El Salheya El Qadima", "El Salheya El Gadida", "Tanis", "10th of Ramadan City", "Zagazig"],
+            "Qalyubia": ["Banha", "Al Khankah", "Al Obour City", "Al Qanatir Al Khayriyyah", "Shibin El Qanater", "Toukh", "Kafr Shukr", "Qalyub", "Shubra Al Khaymah"],
+            "Menoufia": ["Quwaysna", "Birkat as SAB", "El Sadat City", "El Shohada", "Tala", "Shebeen El Kom", "El Bagour", "Menouf", "Ashmoun"],
+            "Damietta": ["Faraskur", "Damietta", "New Damietta", "Kafr Saad", "El Zarqa", "Kafr Al Battikh", "Ras El Bar", "Izbat Al Burj"],
+            "Port Said": ["Port Said"],
+            "Matrouh": ["Marsa Matruh", "North Coast"],
+            "New Valley": ["Kharga", "Dakhla", "Farafra"],
+            "Ismailia": ["Ismailia"],
+            "Suez": ["Suez"],
+            "South Sinai": ["South Sinai Governorate", "Sharm El Sheikh", "Dahab"],
+            "North Sinai": ["North Sinai"]
+        };
+
+        // تحويل أسماء المدن للعربية
+        function getArabicCityName(englishName) {
+            const cityMap = {
+                'Cairo': 'القاهرة',
+                'Giza': 'الجيزة', 
+                'Alexandria': 'الإسكندرية',
+                'Luxor': 'الأقصر',
+                'Aswan': 'أسوان',
+                'Red Sea': 'البحر الأحمر',
+                'Assiut': 'أسيوط',
+                'Sohag': 'سوهاج',
+                'Qena': 'قنا',
+                'Minya': 'المنيا',
+                'Beni Suef': 'بني سويف',
+                'Fayoum': 'الفيوم',
+                'Beheira': 'البحيرة',
+                'Kafr El Sheikh': 'كفر الشيخ',
+                'Gharbia': 'الغربية',
+                'Dakahlia': 'الدقهلية',
+                'Sharqia': 'الشرقية',
+                'Qalyubia': 'القليوبية',
+                'Menoufia': 'المنوفية',
+                'Damietta': 'دمياط',
+                'Port Said': 'بورسعيد',
+                'Matrouh': 'مطروح',
+                'New Valley': 'الوادي الجديد',
+                'Ismailia': 'الإسماعيلية',
+                'Suez': 'السويس',
+                'South Sinai': 'جنوب سيناء',
+                'North Sinai': 'شمال سيناء'
+            };
+            
+            return cityMap[englishName] || englishName;
+        }
+
+        // تحميل المدن في القائمة
+        function loadCities() {
+            const citySelect = document.getElementById('registerCity');
+            citySelect.innerHTML = '<option value="">اختر المدينة</option>';
+            
+            Object.keys(citiesData).forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = getArabicCityName(city);
+                citySelect.appendChild(option);
+            });
+        }
+
+        // تحديث المناطق عند اختيار المدينة
+        function setupCityAreaListener() {
+            const citySelect = document.getElementById('registerCity');
+            const areaSelect = document.getElementById('registerArea');
+            
+            citySelect.addEventListener('change', function() {
+                const selectedCity = this.value;
+                areaSelect.innerHTML = '<option value="">اختر المنطقة</option>';
+                areaSelect.disabled = !selectedCity;
+
+                if (selectedCity && citiesData[selectedCity]) {
+                    citiesData[selectedCity].forEach(area => {
+                        const option = document.createElement('option');
+                        option.value = area;
+                        option.textContent = area;
+                        areaSelect.appendChild(option);
+                    });
+                }
+            });
+        }
+
         // تبديل التبويبات
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -257,7 +332,7 @@
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
             const phone = document.getElementById('registerPhone').value.trim();
             const city = document.getElementById('registerCity').value;
-            const area = document.getElementById('registerArea').value.trim();
+            const area = document.getElementById('registerArea').value;
             const address = document.getElementById('registerAddress').value.trim();
 
             // التحقق من البيانات
@@ -300,7 +375,7 @@
                 id: Date.now().toString(),
                 storeName: storeName,
                 email: email,
-                password: password, // في الواقع يجب تشفيرها
+                password: password,
                 phone: phone,
                 city: city,
                 area: area,
@@ -356,6 +431,10 @@
             if (currentMerchant) {
                 window.location.href = 'merchant-dashboard.html';
             }
+            
+            // تحميل بيانات المدن
+            loadCities();
+            setupCityAreaListener();
         });
     </script>
 </body>
