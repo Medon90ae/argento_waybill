@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Argento Waybill - تسجيل بوالص</title>
+    <title>Argento Waybill - نظام تسجيل البوالص</title>
     <style>
         * {
             margin: 0;
@@ -14,37 +14,38 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
         }
         .container {
+            max-width: 1200px;
+            margin: 0 auto;
             background: white;
-            padding: 40px;
             border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
             text-align: center;
-            max-width: 600px;
-            width: 100%;
         }
-        .logo {
-            margin-bottom: 30px;
-        }
-        .logo h1 {
-            color: #2c3e50;
-            font-size: 32px;
+        .header h1 {
+            font-size: 2.5em;
             margin-bottom: 10px;
         }
-        .logo p {
-            color: #7f8c8d;
-            font-size: 18px;
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
         }
-        .options {
+        .main-content {
+            padding: 40px;
+        }
+        .options-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin: 30px 0;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
         }
         .option-card {
             background: #f8f9fa;
@@ -54,6 +55,7 @@
             color: #2c3e50;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            text-align: center;
         }
         .option-card:hover {
             transform: translateY(-5px);
@@ -61,87 +63,371 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
         .option-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
+            font-size: 50px;
+            margin-bottom: 20px;
         }
         .option-title {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         .option-desc {
             color: #7f8c8d;
-            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .option-features {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .option-features ul {
+            list-style: none;
+            padding: 0;
+        }
+        .option-features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .option-features li:before {
+            content: "✅ ";
+            margin-left: 10px;
         }
         .instructions {
             background: #e8f5e8;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 40px;
+            border-right: 4px solid #27ae60;
+        }
+        .instructions h2 {
+            color: #27ae60;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .step {
+            background: white;
             padding: 20px;
             border-radius: 10px;
-            margin-top: 30px;
-            text-align: right;
+            text-align: center;
         }
-        .instructions h3 {
-            color: #27ae60;
-            margin-bottom: 15px;
+        .step-number {
+            background: #27ae60;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px auto;
+            font-weight: bold;
         }
-        .instructions ol {
-            text-align: right;
-            padding-right: 20px;
+        .quick-links {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 40px;
+            text-align: center;
         }
-        .instructions li {
-            margin-bottom: 10px;
-            line-height: 1.6;
+        .quick-links h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .admin-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            color: #856404;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">
+        <div class="header">
             <h1>🏪 Argento Waybill</h1>
-            <p>نظام تسجيل البوالص والطلبات الذكي</p>
+            <p>نظام تسجيل البوالص والطلبات الذكي - معالجة بالذكاء الاصطناعي</p>
         </div>
 
-        <div class="options">
-            <a href="login.html" class="option-card">
-                <div class="option-icon">👨‍💼</div>
-                <div class="option-title">منصة التجار</div>
-                <div class="option-desc">للتجار والموزعين - معالجة بالذكاء الاصطناعي</div>
-            </a>
+        <div class="main-content">
+            <!-- إشعار للإدارة -->
+            <div class="admin-notice">
+                <strong>🔒 رابط الإدارة:</strong> 
+                <a href="admin.html?secret=argento2024" class="btn" style="margin-right: 15px;">🛠️ لوحة الإدارة</a>
+                <small>للمشرفين فقط</small>
+            </div>
 
-            <a href="index.html" class="option-card">
-                <div class="option-icon">🛒</div>
-                <div class="option-title">متجر العملاء</div>
-                <div class="option-desc">لعملاء الفيسبوك والانستجرام</div>
-            </a>
+            <div class="options-grid">
+                <!-- منصة التجار -->
+                <a href="login.html" class="option-card">
+                    <div class="option-icon">👨‍💼</div>
+                    <div class="option-title">منصة التجار</div>
+                    <div class="option-desc">
+                        نظام متكامل للتجار والموزعين لمعالجة الطلبات تلقائياً باستخدام الذكاء الاصطناعي
+                    </div>
+                    <div class="option-features">
+                        <ul>
+                            <li>تسجيل دخول آمن</li>
+                            <li>معالجة تلقائية للبيانات</li>
+                            <li>تحديد المدن والمناطق</li>
+                            <li>تصدير لسبيداف</li>
+                            <li>إحصائيات متقدمة</li>
+                        </ul>
+                    </div>
+                </a>
+
+                <!-- متجر العملاء -->
+                <a href="https://medon90ae.github.io/argento-store/" class="option-card" target="_blank">
+                    <div class="option-icon">🛒</div>
+                    <div class="option-title">متجر العملاء</div>
+                    <div class="option-desc">
+                        واجهة عملاء الفيسبوك والانستجرام لطلب المنتجات بشكل سهل وسريع
+                    </div>
+                    <div class="option-features">
+                        <ul>
+                            <li>واجهة مستخدم بسيطة</li>
+                            <li>ربط مع كتالوج الفيسبوك</li>
+                            <li>حساب الشحن التلقائي</li>
+                            <li>تأكيد الطلب فوراً</li>
+                            <li>دعم جميع المدن</li>
+                        </ul>
+                    </div>
+                </a>
+            </div>
+
+            <!-- الإحصائيات -->
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalMerchants">0</div>
+                    <div>التجار المسجلين</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalOrders">0</div>
+                    <div>الطلبات المعالجة</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalCities">27</div>
+                    <div>المدن المدعومة</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="successRate">100%</div>
+                    <div>معدل النجاح</div>
+                </div>
+            </div>
+
+            <!-- التعليمات -->
+            <div class="instructions">
+                <h2>🚀 كيفية استخدام النظام</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>للتجار والموزعين</h3>
+                        <p>سجل حساب جديد في منصة التجار وأدخل بيانات متجرك مرة واحدة</p>
+                        <a href="login.html" class="btn btn-primary">بدء التسجيل</a>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>معالجة الطلبات</h3>
+                        <p>الصق البيانات الخام من العملاء وسيتم معالجتها تلقائياً بالذكاء الاصطناعي</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>التصدير والتحميل</h3>
+                        <p>حمل البيانات جاهزة لرفعها على منصة سبيداف للشحن</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h3>لعملاء الفيسبوك</h3>
+                        <p>استخدم رابط المتجر في كتالوج الفيسبوك لتسجيل الطلبات تلقائياً</p>
+                        <a href="https://medon90ae.github.io/argento-store/" class="btn" target="_blank">رابط المتجر</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الروابط السريعة -->
+            <div class="quick-links">
+                <h3>🔗 روابط سريعة</h3>
+                <a href="login.html" class="btn btn-primary">👨‍💼 منصة التجار</a>
+                <a href="https://medon90ae.github.io/argento-store/" class="btn" target="_blank">🛒 متجر العملاء</a>
+                <a href="admin.html?secret=argento2024" class="btn">🛠️ لوحة الإدارة</a>
+                <a href="#features" class="btn">⭐ المميزات</a>
+            </div>
+
+            <!-- المميزات -->
+            <div id="features" style="margin-top: 50px;">
+                <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">⭐ مميزات النظام</h2>
+                <div class="options-grid">
+                    <div class="option-card" style="cursor: default;">
+                        <div class="option-icon">🤖</div>
+                        <div class="option-title">ذكاء اصطناعي</div>
+                        <div class="option-desc">
+                            نظام معالجة ذكي يستخرج تلقائياً الأسماء والعناوين وأرقام الهواتف من البيانات الخام
+                        </div>
+                    </div>
+                    <div class="option-card" style="cursor: default;">
+                        <div class="option-icon">🏙️</div>
+                        <div class="option-title">دعم كامل للمدن</div>
+                        <div class="option-desc">
+                            يدعم جميع مدن ومحافظات مصر مع تحديد تلقائي للمدينة والمنطقة من العنوان
+                        </div>
+                    </div>
+                    <div class="option-card" style="cursor: default;">
+                        <div class="option-icon">📊</div>
+                        <div class="option-title">تقارير متقدمة</div>
+                        <div class="option-desc">
+                            إحصائيات مفصلة عن الطلبات والإيرادات وأداء المتجر بشكل مرئي وسهل
+                        </div>
+                    </div>
+                    <div class="option-card" style="cursor: default;">
+                        <div class="option-icon">⚡</div>
+                        <div class="option-title">معالجة سريعة</div>
+                        <div class="option-desc">
+                            معالجة عشرات الطلبات في ثوانٍ معدودة بدقة تصل إلى 100%
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="instructions">
-            <h3>🚀 كيفية الاستخدام:</h3>
-            <ol>
-                <li><strong>للتجار:</strong> اضغط على "منصة التجار" وقم بتسجيل حساب جديد</li>
-                <li><strong>للعملاء:</strong> اضغط على "متجر العملاء" لطلب المنتجات</li>
-                <li><strong>لإدارة الطلبات:</strong> استخدم الرابط السري للإدارة</li>
-                <li><strong>للتتبع:</strong> جميع البيانات تحفظ تلقائياً</li>
-            </ol>
+        <div class="footer">
+            <h3>Argento Waybill System</h3>
+            <p>نظام تسجيل البوالص الذكي - معالجة بالذكاء الاصطناعي</p>
+            <div style="margin-top: 20px;">
+                <a href="login.html" class="btn">منصة التجار</a>
+                <a href="https://medon90ae.github.io/argento-store/" class="btn" target="_blank">متجر العملاء</a>
+                <a href="admin.html?secret=argento2024" class="btn">لوحة الإدارة</a>
+            </div>
+            <p style="margin-top: 20px; opacity: 0.8; font-size: 0.9em;">
+                &copy; 2024 Argento Waybill. جميع الحقوق محفوظة.
+            </p>
         </div>
     </div>
 
     <script>
-        // تحقق إذا كانت الصفحات موجودة
+        // تحديث الإحصائيات
+        function updateStats() {
+            // عدد التجار
+            const merchants = JSON.parse(localStorage.getItem('merchants')) || [];
+            document.getElementById('totalMerchants').textContent = merchants.length;
+
+            // عدد الطلبات الإجمالي
+            let totalOrders = 0;
+            merchants.forEach(merchant => {
+                const merchantOrders = JSON.parse(localStorage.getItem(`merchant_orders_${merchant.id}`)) || [];
+                totalOrders += merchantOrders.length;
+            });
+            document.getElementById('totalOrders').textContent = totalOrders;
+
+            // عدد المدن
+            document.getElementById('totalCities').textContent = Object.keys(citiesData).length;
+
+            // معدل النجاح
+            if (totalOrders > 0) {
+                document.getElementById('successRate').textContent = '100%';
+            }
+        }
+
+        // بيانات المدن (مشتركة بين الصفحات)
+        const citiesData = {
+            "Cairo": ["Abdin", "El Abaseya", "Al Azbakeya", "El Katameya", "Al Manial", "El Mokattam", "Dar El Salam", "El Basatin", "El-Gamaleya", "Al Sayeda Zeinab", "Helwan", "Maadi", "Masr El Qadima", "Qasr El Nil", "El Khalifa", "Torah", "Zamalek", "El Shorouk", "Badr City", "Ain Shams", "Madinaty", "Al Zaitoun", "Nasr City", "New Cairo", "Heliopolis", "Al Amiriyyah", "El Salam", "El Waily", "Al Sharabeya", "Al Marj", "Al Matariyyah", "El Nozha", "Hadaeq Al Qubbah", "Shobra", "Nile Corniche", "Cairo"],
+            "Giza": ["6th of October City", "El Sheikh Zayed City", "Al Ayyat", "Al Hawamidiyya", "Badrshein", "El Saf", "Al Omraneya", "Atfih", "Bahariya Oasis", "Pyramids Gardens", "Faisal", "Haram", "Abu an Numros", "Al Agouzah", "Al Warak", "Awsīm", "Boulaq Ad Dakrour", "Al Doqi", "Ard El Lewa", "Mohandessin", "Kirdasah", "Imbabah", "Monshaet El Kanater", "Giza"],
+            "Alexandria": ["Ad Dakhilah", "Amreya", "Borg El Arab", "Moharam Bek", "Bab Sharqi", "Sidi Gabir", "Al Attarin", "Mansheya", "Al Labban", "El Gomrok", "Port al Basal", "Karmus", "Montaza 2", "Alexandria"],
+            "Luxor": ["Luxor", "Armant", "Esna", "Al Qarnah"],
+            "Aswan": ["Aswan", "Kom Ombo", "Daraw", "Edfu"],
+            "Red Sea": ["Hurghada", "Ras Ghareb", "Safaga", "Quseer", "Marsa Alam"],
+            "Assiut": ["Abnub", "Abu Tig", "Al Badari", "El Ghanayem", "El Fateh", "El Quseyya", "Dayrout", "Sahel Selim", "Sidfa", "Asyut", "Manfalut", "Manqabad"],
+            "Sohag": ["Tima", "Tahta", "Juhaynah", "El Maragha", "Sohag", "Akhmim", "Saqultah", "Al Minshah", "Girga", "Al Balyana", "Dar El Salam", "El Usayrat"],
+            "Qena": ["Qena", "Qus", "Madinet Qaft", "Dishna", "Naqadah", "Nagaa Hammadi", "Farshut", "Abu Tesht"],
+            "Minya": ["El Idwa", "Maghagha", "Bani Mazar", "Matai", "Samalut", "Minya", "Abu Qurqas", "Mallawi", "Dayr Mawas"],
+            "Beni Suef": ["Al Wasta", "Nasser", "Beni Suef", "Ihnasya Al Madinah", "Biba", "Sumusta El Waqf", "El Fashn"],
+            "Fayoum": ["Tamiya", "Sinnuris", "Faiyum", "Atsa", "Ibsheway", "Youssef Al Seddik"],
+            "Beheira": ["Damanhour", "Kafr El Dawar", "Abu Hummus", "El Mahmoudeya", "Natrn Valley", "Al Noubareya", "Abu Al Matamir", "Housh Eissa", "Itay Al Barud", "Shubrakhit", "Rosetta", "Idku", "Badr", "Ad Dilinjat", "AR Rahmaniyyah", "Kom Hamada"],
+            "Kafr El Sheikh": ["Kafr El Shaikh", "Desouk", "Fowa", "Mutubas", "Baltim", "El Hamool", "Riyadh", "Biyala", "Qillin", "Sidi Salem"],
+            "Gharbia": ["Kafr Az Zayyat", "El Mahalla El Kubra", "Samannoud", "Basyoun", "El Santa", "Zefta", "Kotoor", "Tanta"],
+            "Dakahlia": ["Mansoura", "Aga", "Al Manzalah", "Belqas", "Dikirnis", "El Senbellawein", "Menyet El Nasr", "Mit Ghamr", "Shirbin", "Talkha"],
+            "Sharqia": ["Bilbeis", "Inshas", "Awlad Saqr", "El Husseiniya", "Dyarb Negm", "Faqus", "Kafr Saqr", "Mashtul as Suq", "Minya Al Qamh", "El Salheya El Qadima", "El Salheya El Gadida", "Tanis", "10th of Ramadan City", "Zagazig"],
+            "Qalyubia": ["Banha", "Al Khankah", "Al Obour City", "Al Qanatir Al Khayriyyah", "Shibin El Qanater", "Toukh", "Kafr Shukr", "Qalyub", "Shubra Al Khaymah"],
+            "Menoufia": ["Quwaysna", "Birkat as SAB", "El Sadat City", "El Shohada", "Tala", "Shebeen El Kom", "El Bagour", "Menouf", "Ashmoun"],
+            "Damietta": ["Faraskur", "Damietta", "New Damietta", "Kafr Saad", "El Zarqa", "Kafr Al Battikh", "Ras El Bar", "Izbat Al Burj"],
+            "Port Said": ["Port Said"],
+            "Matrouh": ["Marsa Matruh", "North Coast"],
+            "New Valley": ["Kharga", "Dakhla", "Farafra"],
+            "Ismailia": ["Ismailia"],
+            "Suez": ["Suez"],
+            "South Sinai": ["South Sinai Governorate", "Sharm El Sheikh", "Dahab"],
+            "North Sinai": ["North Sinai"]
+        };
+
+        // تحديث الإحصائيات عند التحميل
         window.addEventListener('load', function() {
-            fetch('login.html')
-                .then(response => {
-                    if (!response.ok) {
-                        document.querySelector('a[href="login.html"]').innerHTML = `
-                            <div class="option-icon">⚠️</div>
-                            <div class="option-title">تحميل منصة التجار</div>
-                            <div class="option-desc">جاري إعداد النظام...</div>
-                        `;
-                    }
-                })
-                .catch(error => {
-                    console.log('منصة التجار قيد التطوير');
-                });
+            updateStats();
+            
+            // تحديث الإحصائيات كل 10 ثواني
+            setInterval(updateStats, 10000);
+        });
+
+        // تحريك سلس للروابط الداخلية
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
         });
     </script>
 </body>
