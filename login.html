@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - منصة التجار</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #2c3e50;
+            font-size: 28px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        .btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .tab.active {
+            border-bottom: 3px solid #27ae60;
+            color: #27ae60;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #fcc;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🏪 منصة التجار</h1>
+            <p>نظام معالجة الطلبات بالذكاء الاصطناعي</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('login')">تسجيل الدخول</div>
+            <div class="tab" onclick="switchTab('register')">حساب جديد</div>
+        </div>
+
+        <!-- تسجيل الدخول -->
+        <div class="tab-content active" id="login-tab">
+            <div class="error-message" id="loginError"></div>
+            
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="loginEmail" placeholder="example@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
+            </div>
+
+            <button class="btn" onclick="login()">🔐 تسجيل الدخول</button>
+        </div>
+
+        <!-- إنشاء حساب -->
+        <div class="tab-content" id="register-tab">
+            <div class="error-message" id="registerError"></div>
+            
+            <div class="form-group">
+                <label>اسم المتجر</label>
+                <input type="text" id="registerStoreName" placeholder="مثال: مصنع دوفا للملابس" required>
+            </div>
+
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="registerEmail" placeholder="example@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="registerPassword" placeholder="كلمة المرور (6 أحرف على الأقل)" required minlength="6">
+            </div>
+
+            <div class="form-group">
+                <label>تأكيد كلمة المرور</label>
+                <input type="password" id="registerConfirmPassword" placeholder="أعد إدخال كلمة المرور" required>
+            </div>
+
+            <div class="form-group">
+                <label>رقم الهاتف</label>
+                <input type="tel" id="registerPhone" placeholder="مثال: 01091104466" required pattern="[0-9]{11}">
+            </div>
+
+            <div class="form-group">
+                <label>المدينة</label>
+                <select id="registerCity" required>
+                    <option value="">اختر المدينة</option>
+                    <option value="Cairo">القاهرة</option>
+                    <option value="Giza">الجيزة</option>
+                    <option value="Alexandria">الإسكندرية</option>
+                    <option value="Sharqia">الشرقية</option>
+                    <option value="Dakahlia">الدقهلية</option>
+                    <option value="Gharbia">الغربية</option>
+                    <option value="Beheira">البحيرة</option>
+                    <option value="Qalyubia">القليوبية</option>
+                    <option value="Menoufia">المنوفية</option>
+                    <option value="Port Said">بورسعيد</option>
+                    <option value="Suez">السويس</option>
+                    <option value="Ismailia">الإسماعيلية</option>
+                    <option value="Damietta">دمياط</option>
+                    <option value="Kafr El Sheikh">كفر الشيخ</option>
+                    <option value="Beni Suef">بني سويف</option>
+                    <option value="Fayoum">الفيوم</option>
+                    <option value="Minya">المنيا</option>
+                    <option value="Assiut">أسيوط</option>
+                    <option value="Sohag">سوهاج</option>
+                    <option value="Qena">قنا</option>
+                    <option value="Luxor">الأقصر</option>
+                    <option value="Aswan">أسوان</option>
+                    <option value="Red Sea">البحر الأحمر</option>
+                    <option value="New Valley">الوادي الجديد</option>
+                    <option value="Matrouh">مطروح</option>
+                    <option value="North Sinai">شمال سيناء</option>
+                    <option value="South Sinai">جنوب سيناء</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>المنطقة</label>
+                <input type="text" id="registerArea" placeholder="مثال: باب الشعرية" required>
+            </div>
+
+            <div class="form-group">
+                <label>العنوان التفصيلي</label>
+                <input type="text" id="registerAddress" placeholder="مثال: 4 شارع الموصلي - امام مدرسة خليل اغا" required>
+            </div>
+
+            <button class="btn btn-secondary" onclick="register()">📝 إنشاء حساب</button>
+        </div>
+    </div>
+
+    <script>
+        // تبديل التبويبات
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // إظهار رسالة خطأ
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // التحقق من صحة البريد الإلكتروني
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // التحقق من صحة الهاتف
+        function isValidPhone(phone) {
+            return /^01[0-2|5]{1}[0-9]{8}$/.test(phone);
+        }
+
+        // إنشاء حساب جديد
+        function register() {
+            const storeName = document.getElementById('registerStoreName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const phone = document.getElementById('registerPhone').value.trim();
+            const city = document.getElementById('registerCity').value;
+            const area = document.getElementById('registerArea').value.trim();
+            const address = document.getElementById('registerAddress').value.trim();
+
+            // التحقق من البيانات
+            if (!storeName || !email || !password || !confirmPassword || !phone || !city || !area || !address) {
+                showError('registerError', '⚠️ يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showError('registerError', '⚠️ يرجى إدخال بريد إلكتروني صحيح');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('registerError', '⚠️ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('registerError', '⚠️ كلمتا المرور غير متطابقتين');
+                return;
+            }
+
+            if (!isValidPhone(phone)) {
+                showError('registerError', '⚠️ يرجى إدخال رقم هاتف صحيح (11 رقم)');
+                return;
+            }
+
+            // الحصول على المستخدمين المسجلين
+            const merchants = JSON.parse(localStorage.getItem('merchants')) || [];
+
+            // التحقق من عدم وجود البريد مسبقاً
+            if (merchants.find(m => m.email === email)) {
+                showError('registerError', '⚠️ هذا البريد الإلكتروني مسجل مسبقاً');
+                return;
+            }
+
+            // إنشاء التاجر الجديد
+            const merchant = {
+                id: Date.now().toString(),
+                storeName: storeName,
+                email: email,
+                password: password, // في الواقع يجب تشفيرها
+                phone: phone,
+                city: city,
+                area: area,
+                address: address,
+                registrationDate: new Date().toISOString(),
+                isActive: true
+            };
+
+            // حفظ التاجر
+            merchants.push(merchant);
+            localStorage.setItem('merchants', JSON.stringify(merchants));
+
+            // تسجيل الدخول تلقائياً
+            localStorage.setItem('currentMerchant', JSON.stringify(merchant));
+            
+            alert('✅ تم إنشاء الحساب بنجاح!');
+            window.location.href = 'merchant-dashboard.html';
+        }
+
+        // تسجيل الدخول
+        function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showError('loginError', '⚠️ يرجى إدخال البريد الإلكتروني وكلمة المرور');
+                return;
+            }
+
+            const merchants = JSON.parse(localStorage.getItem('merchants')) || [];
+            const merchant = merchants.find(m => m.email === email && m.password === password);
+
+            if (!merchant) {
+                showError('loginError', '⚠️ البريد الإلكتروني أو كلمة المرور غير صحيحة');
+                return;
+            }
+
+            if (!merchant.isActive) {
+                showError('loginError', '⚠️ هذا الحساب غير مفعل');
+                return;
+            }
+
+            // حفظ بيانات الجلسة
+            localStorage.setItem('currentMerchant', JSON.stringify(merchant));
+            
+            alert(`🎉 مرحباً بعودتك ${merchant.storeName}`);
+            window.location.href = 'merchant-dashboard.html';
+        }
+
+        // التحقق من تسجيل الدخول عند تحميل الصفحة
+        window.addEventListener('load', function() {
+            const currentMerchant = JSON.parse(localStorage.getItem('currentMerchant'));
+            if (currentMerchant) {
+                window.location.href = 'merchant-dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>

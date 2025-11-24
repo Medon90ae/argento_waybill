@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - منصة التجار</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        .user-info {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .logout-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            border-bottom: 3px solid #27ae60;
+            background: white;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        .btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+        .btn-ai {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+        .btn-export {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        .raw-input {
+            height: 200px;
+            font-family: 'Courier New', monospace;
+        }
+        .result-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px dashed #27ae60;
+            margin-top: 20px;
+        }
+        .order-card {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-right: 4px solid #27ae60;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #fcc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="user-info" id="userInfo">جاري التحميل...</div>
+            <a href="#" class="logout-btn" onclick="logout()">🚪 تسجيل الخروج</a>
+            <h1>🤖 لوحة تحكم التاجر</h1>
+            <p>نظام معالجة الطلبات بالذكاء الاصطناعي</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('process')">⚡ معالجة الطلبات</div>
+            <div class="tab" onclick="switchTab('orders')">📦 الطلبات الجاهزة</div>
+            <div class="tab" onclick="switchTab('profile')">👤 الملف الشخصي</div>
+        </div>
+
+        <!-- تبويب معالجة الطلبات -->
+        <div class="tab-content active" id="process-tab">
+            <h2>معالجة البيانات الخام</h2>
+            <p>الصق البيانات كما تصل من العملاء وسيقوم الذكاء الاصطناعي بمعالجتها تلقائياً</p>
+            
+            <div class="form-group">
+                <label>البيانات الخام من العملاء</label>
+                <textarea id="rawData" class="raw-input" placeholder="الصق هنا البيانات كما تصل من العملاء...
+
+أمثلة:
+
+https://www.instagram.com/esraa_esmail_26
+اسراء اسماعيل
+كمباوند جولف سيتى بجوار كارفور العبور منطقه السندس عماره ج٦ مدخل٣ ڤيلا ٨ ارضى شمال الاسنسير
+01157228515
+جاكيت بيج فرو
+315 شامل الشحن
+
+https://www.instagram.com/hannahhanyahmed
+الاسم : hana hany 
+العنوان: ٣٤ شارع حسنين عبد القادر المنطقة السادسة مدينة نصر 
+رقمين : 01020012790
+01011709105
+كاردي تريكو بيج 
+310 شامل الشحن"></textarea>
+            </div>
+
+            <button class="btn btn-ai" onclick="processWithAI()">🧠 معالجة بالذكاء الاصطناعي</button>
+            
+            <div class="result-box" id="processingResult" style="display: none;">
+                <h3>📋 النتائج المعالجة:</h3>
+                <div id="processedOrders"></div>
+                <button class="btn btn-export" onclick="exportProcessedOrders()">📥 تصدير الطلبات</button>
+                <button class="btn" onclick="saveProcessedOrders()">💾 حفظ الطلبات</button>
+            </div>
+        </div>
+
+        <!-- تبويب الطلبات الجاهزة -->
+        <div class="tab-content" id="orders-tab">
+            <h2>الطلبات المحفوظة</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalOrders">0</div>
+                    <div>إجمالي الطلبات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="todayOrders">0</div>
+                    <div>طلبات اليوم</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalRevenue">0</div>
+                    <div>إجمالي الإيرادات</div>
+                </div>
+            </div>
+            <div id="savedOrdersContainer">
+                <p>جاري تحميل الطلبات...</p>
+            </div>
+        </div>
+
+        <!-- تبويب الملف الشخصي -->
+        <div class="tab-content" id="profile-tab">
+            <h2>الملف الشخصي</h2>
+            <div id="profileInfo">
+                <p>جاري تحميل البيانات...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMerchant = null;
+        let processedOrders = [];
+
+        // تحميل البيانات عند بدء التشغيل
+        window.addEventListener('load', function() {
+            checkAuth();
+            loadMerchantData();
+            loadSavedOrders();
+        });
+
+        // التحقق من المصادقة
+        function checkAuth() {
+            currentMerchant = JSON.parse(localStorage.getItem('currentMerchant'));
+            if (!currentMerchant) {
+                window.location.href = 'login.html';
+                return;
+            }
+        }
+
+        // تحميل بيانات التاجر
+        function loadMerchantData() {
+            document.getElementById('userInfo').textContent = currentMerchant.storeName;
+            
+            // تحديث الملف الشخصي
+            document.getElementById('profileInfo').innerHTML = `
+                <div class="order-card">
+                    <h3>${currentMerchant.storeName}</h3>
+                    <p><strong>البريد الإلكتروني:</strong> ${currentMerchant.email}</p>
+                    <p><strong>الهاتف:</strong> ${currentMerchant.phone}</p>
+                    <p><strong>العنوان:</strong> ${currentMerchant.address}</p>
+                    <p><strong>المدينة:</strong> ${currentMerchant.city}</p>
+                    <p><strong>المنطقة:</strong> ${currentMerchant.area}</p>
+                    <p><strong>تاريخ التسجيل:</strong> ${new Date(currentMerchant.registrationDate).toLocaleDateString('ar-EG')}</p>
+                </div>
+            `;
+        }
+
+        // تبديل التبويبات
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // معالجة البيانات بالذكاء الاصطناعي
+        function processWithAI() {
+            const rawData = document.getElementById('rawData').value.trim();
+            
+            if (!rawData) {
+                alert('⚠️ يرجى إدخال البيانات الخام');
+                return;
+            }
+
+            if (!currentMerchant) {
+                alert('⚠️ يرجى تسجيل الدخول أولاً');
+                return;
+            }
+
+            try {
+                // معالجة البيانات الخام
+                const orders = processRawData(rawData, currentMerchant);
+                
+                if (orders.length === 0) {
+                    alert('❌ لم يتم العثور على طلبات في البيانات المدخلة');
+                    return;
+                }
+
+                // عرض النتائج
+                displayProcessedOrders(orders);
+                document.getElementById('processingResult').style.display = 'block';
+                
+            } catch (error) {
+                alert('❌ حدث خطأ في معالجة البيانات: ' + error.message);
+            }
+        }
+
+        // دالة معالجة البيانات الخام - محسنة وبدون بيانات وهمية
+        function processRawData(rawData, sender) {
+            const lines = rawData.split('\n').filter(line => line.trim());
+            const orders = [];
+            let currentOrder = {};
+            let orderLines = [];
+
+            // تجميع الأسطر الخاصة بكل طلب
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (line.includes('instagram.com') || line.includes('انستجرام') || i === lines.length - 1) {
+                    // إذا وجدنا رابط انستجرام جديد أو نهاية البيانات، نعالج الطلب السابق
+                    if (orderLines.length > 0) {
+                        const order = processOrderLines(orderLines, sender);
+                        if (order && order.receiverName && order.receiverPhone && order.receiverAddress) {
+                            orders.push(order);
+                        }
+                        orderLines = [];
+                    }
+                }
+                
+                orderLines.push(line);
+            }
+
+            // معالجة آخر طلب
+            if (orderLines.length > 0) {
+                const order = processOrderLines(orderLines, sender);
+                if (order && order.receiverName && order.receiverPhone && order.receiverAddress) {
+                    orders.push(order);
+                }
+            }
+
+            return orders;
+        }
+
+        // معالجة أسطر الطلب الواحد
+        function processOrderLines(lines, sender) {
+            const order = {
+                senderName: sender.storeName,
+                senderPhone: sender.phone,
+                senderAddress: sender.address,
+                senderCity: sender.city,
+                senderArea: sender.area,
+                timestamp: new Date().toISOString()
+            };
+
+            for (const line of lines) {
+                // اكتشاف انستجرام
+                if (line.includes('instagram.com') && !order.instagram) {
+                    order.instagram = line;
+                }
+                // اكتشاف الاسم (يجب أن يكون نص بدون أرقام وطويل enough)
+                else if (!order.receiverName && line.length > 2 && line.length < 50 && !/\d/.test(line) && !line.includes('http') && !line.includes('@')) {
+                    order.receiverName = line.replace('الاسم:', '').replace('الاسم', '').trim();
+                }
+                // اكتشاف العنوان (يجب أن يكون طويل ويحتوي على كلمات دالة)
+                else if (!order.receiverAddress && line.length > 10 && (line.includes('شارع') || line.includes('حي') || line.includes('منطقة') || line.includes('مدينة') || line.includes('عمارة') || line.includes('دور'))) {
+                    order.receiverAddress = line.replace('العنوان:', '').replace('العنوان', '').trim();
+                }
+                // اكتشاف الهاتف
+                else if (!order.receiverPhone && /\d{10,}/.test(line)) {
+                    const phones = line.match(/\d{10,}/g);
+                    if (phones) {
+                        order.receiverPhone = phones[0]; // نأخذ أول رقم فقط
+                    }
+                }
+                // اكتشاف المنتج والسعر
+                else if (!order.productName && line.length > 3 && (line.includes('جنيه') || line.includes('شامل') || line.includes('شحن') || /\d+$/.test(line))) {
+                    const productInfo = extractProductInfo(line);
+                    if (productInfo.name && productInfo.price) {
+                        order.productName = productInfo.name;
+                        order.productPrice = productInfo.price;
+                    }
+                }
+            }
+
+            // إذا لم نجد منتج، نستخدم وصف افتراضي
+            if (!order.productName) {
+                order.productName = "منتج من " + sender.storeName;
+                order.productPrice = "0";
+            }
+
+            return order;
+        }
+
+        // استخراج معلومات المنتج
+        function extractProductInfo(text) {
+            const priceMatch = text.match(/(\d+)/g);
+            const price = priceMatch ? priceMatch[priceMatch.length - 1] : '0';
+            
+            // تنظيف النص من السعر والكلمات الشائعة
+            let name = text.replace(/\d+/g, '')
+                          .replace('شامل الشحن', '')
+                          .replace('شامل', '')
+                          .replace('جنيه', '')
+                          .replace('شحن', '')
+                          .trim();
+            
+            // إذا كان الاسم قصير جداً، نستخدم وصف أفضل
+            if (name.length < 3) {
+                name = "منتج من المتجر";
+            }
+
+            return { name, price };
+        }
+
+        // عرض الطلبات المعالجة
+        function displayProcessedOrders(orders) {
+            const container = document.getElementById('processedOrders');
+            
+            container.innerHTML = orders.map((order, index) => `
+                <div class="order-card">
+                    <h4>🛍️ طلب ${index + 1}</h4>
+                    <p><strong>العميل:</strong> ${order.receiverName}</p>
+                    <p><strong>الهاتف:</strong> ${order.receiverPhone}</p>
+                    <p><strong>العنوان:</strong> ${order.receiverAddress}</p>
+                    <p><strong>المنتج:</strong> ${order.productName}</p>
+                    <p><strong>السعر:</strong> ${order.productPrice} جنيه</p>
+                    ${order.instagram ? `<p><strong>انستجرام:</strong> ${order.instagram}</p>` : ''}
+                    <p><strong>الراسل:</strong> ${order.senderName}</p>
+                </div>
+            `).join('');
+
+            // حفظ الطلبات المعالجة مؤقتاً
+            processedOrders = orders;
+        }
+
+        // حفظ الطلبات المعالجة
+        function saveProcessedOrders() {
+            if (processedOrders.length === 0) {
+                alert('❌ لا توجد طلبات لحفظها');
+                return;
+            }
+
+            // الحصول على الطلبات المحفوظة سابقاً
+            const savedOrders = JSON.parse(localStorage.getItem(`merchant_orders_${currentMerchant.id}`)) || [];
+            
+            // إضافة الطلبات الجديدة
+            const newOrders = processedOrders.map(order => ({
+                ...order,
+                id: Date.now() + Math.random(),
+                status: 'pending',
+                merchantId: currentMerchant.id
+            }));
+
+            const allOrders = [...savedOrders, ...newOrders];
+            localStorage.setItem(`merchant_orders_${currentMerchant.id}`, JSON.stringify(allOrders));
+
+            alert(`✅ تم حفظ ${newOrders.length} طلب بنجاح`);
+            loadSavedOrders();
+            switchTab('orders');
+        }
+
+        // تحميل الطلبات المحفوظة
+        function loadSavedOrders() {
+            const savedOrders = JSON.parse(localStorage.getItem(`merchant_orders_${currentMerchant.id}`)) || [];
+            const container = document.getElementById('savedOrdersContainer');
+            
+            // تحديث الإحصائيات
+            document.getElementById('totalOrders').textContent = savedOrders.length;
+            document.getElementById('todayOrders').textContent = savedOrders.filter(order => 
+                new Date(order.timestamp).toDateString() === new Date().toDateString()
+            ).length;
+            
+            const totalRevenue = savedOrders.reduce((sum, order) => sum + (parseInt(order.productPrice) || 0), 0);
+            document.getElementById('totalRevenue').textContent = totalRevenue + ' ج.م';
+
+            if (savedOrders.length === 0) {
+                container.innerHTML = '<p>لا توجد طلبات محفوظة بعد</p>';
+                return;
+            }
+
+            container.innerHTML = savedOrders.map(order => `
+                <div class="order-card">
+                    <h4>${order.receiverName} - ${order.productName}</h4>
+                    <p><strong>الهاتف:</strong> ${order.receiverPhone} | <strong>السعر:</strong> ${order.productPrice} جنيه</p>
+                    <p><strong>العنوان:</strong> ${order.receiverAddress}</p>
+                    <p><strong>التاريخ:</strong> ${new Date(order.timestamp).toLocaleDateString('ar-EG')}</p>
+                    <button class="btn btn-danger" onclick="deleteOrder('${order.id}')" style="padding: 5px 10px; font-size: 12px;">🗑️ حذف</button>
+                </div>
+            `).join('');
+        }
+
+        // حذف طلب
+        function deleteOrder(orderId) {
+            if (!confirm('هل تريد حذف هذا الطلب؟')) return;
+
+            const savedOrders = JSON.parse(localStorage.getItem(`merchant_orders_${currentMerchant.id}`)) || [];
+            const filteredOrders = savedOrders.filter(order => order.id !== orderId);
+            
+            localStorage.setItem(`merchant_orders_${currentMerchant.id}`, JSON.stringify(filteredOrders));
+            loadSavedOrders();
+        }
+
+        // تصدير الطلبات
+        function exportProcessedOrders() {
+            if (processedOrders.length === 0) {
+                alert('❌ لا توجد طلبات للتصدير');
+                return;
+            }
+
+            const finalOrders = processedOrders.map(order => ({
+                so: "",
+                goodsType: "Normal",
+                goodsName: order.productName,
+                quantity: "1",
+                weight: "1", 
+                cod: order.productPrice,
+                insurePrice: "",
+                allowOpen: "No",
+                remark: `انستجرام: ${order.instagram || ''}`,
+                
+                senderName: order.senderName,
+                senderTelephone: order.senderPhone,
+                senderCity: order.senderCity,
+                senderArea: order.senderArea,
+                senderAddress: order.senderAddress,
+                senderEmail: "",
+                
+                receiverName: order.receiverName,
+                receiverTelephone: order.receiverPhone,
+                receiverCity: "Cairo",
+                receiverArea: "منطقة العميل",
+                receiverAddress: order.receiverAddress,
+                receiverEmail: "",
+                
+                deliveryType: "Deliver",
+                timestamp: order.timestamp
+            }));
+
+            let csv = 'S.O.,Goods type,Goods name,Quantity,Weight,COD,Insure price,Whether to allow the package to be opened,Remark,Name,Telephone,City,Area,Senders address,Sender Email,Name,Telephone,City,Area,Receivers address,Receiver Email,Delivery Type\n';
+            
+            finalOrders.forEach(order => {
+                csv += `"${order.so}","${order.goodsType}","${order.goodsName}","${order.quantity}","${order.weight}","${order.cod}","${order.insurePrice}","${order.allowOpen}","${order.remark}","${order.senderName}","${order.senderTelephone}","${order.senderCity}","${order.senderArea}","${order.senderAddress}","${order.senderEmail}","${order.receiverName}","${order.receiverTelephone}","${order.receiverCity}","${order.receiverArea}","${order.receiverAddress}","${order.receiverEmail}","${order.deliveryType}"\n`;
+            });
+
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv; charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `طلبات-${currentMerchant.storeName}-${new Date().toLocaleDateString('ar-EG')}.csv`;
+            a.click();
+            
+            alert(`✅ تم تصدير ${finalOrders.length} طلب بنجاح`);
+        }
+
+        // تسجيل الخروج
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                localStorage.removeItem('currentMerchant');
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>
