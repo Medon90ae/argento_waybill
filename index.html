@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Argento Waybill - تسجيل بوالص</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        .logo {
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .logo p {
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .option-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .option-card:hover {
+            transform: translateY(-5px);
+            border-color: #27ae60;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .option-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        .option-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .option-desc {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .instructions {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: right;
+        }
+        .instructions h3 {
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+        .instructions ol {
+            text-align: right;
+            padding-right: 20px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🏪 Argento Waybill</h1>
+            <p>نظام تسجيل البوالص والطلبات الذكي</p>
+        </div>
+
+        <div class="options">
+            <a href="login.html" class="option-card">
+                <div class="option-icon">👨‍💼</div>
+                <div class="option-title">منصة التجار</div>
+                <div class="option-desc">للتجار والموزعين - معالجة بالذكاء الاصطناعي</div>
+            </a>
+
+            <a href="index.html" class="option-card">
+                <div class="option-icon">🛒</div>
+                <div class="option-title">متجر العملاء</div>
+                <div class="option-desc">لعملاء الفيسبوك والانستجرام</div>
+            </a>
+        </div>
+
+        <div class="instructions">
+            <h3>🚀 كيفية الاستخدام:</h3>
+            <ol>
+                <li><strong>للتجار:</strong> اضغط على "منصة التجار" وقم بتسجيل حساب جديد</li>
+                <li><strong>للعملاء:</strong> اضغط على "متجر العملاء" لطلب المنتجات</li>
+                <li><strong>لإدارة الطلبات:</strong> استخدم الرابط السري للإدارة</li>
+                <li><strong>للتتبع:</strong> جميع البيانات تحفظ تلقائياً</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // تحقق إذا كانت الصفحات موجودة
+        window.addEventListener('load', function() {
+            fetch('login.html')
+                .then(response => {
+                    if (!response.ok) {
+                        document.querySelector('a[href="login.html"]').innerHTML = `
+                            <div class="option-icon">⚠️</div>
+                            <div class="option-title">تحميل منصة التجار</div>
+                            <div class="option-desc">جاري إعداد النظام...</div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.log('منصة التجار قيد التطوير');
+                });
+        });
+    </script>
+</body>
+</html>
