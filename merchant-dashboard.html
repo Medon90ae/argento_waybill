@@ -166,6 +166,15 @@
             margin: 10px 0;
             border: 1px solid #fcc;
         }
+        .success-message {
+            background: #efe;
+            color: #363;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #cfc;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -212,6 +221,9 @@ https://www.instagram.com/hannahhanyahmed
 
             <button class="btn btn-ai" onclick="processWithAI()">🧠 معالجة بالذكاء الاصطناعي</button>
             
+            <div class="success-message" id="successMessage"></div>
+            <div class="error-message" id="errorMessage"></div>
+            
             <div class="result-box" id="processingResult" style="display: none;">
                 <h3>📋 النتائج المعالجة:</h3>
                 <div id="processedOrders"></div>
@@ -252,6 +264,37 @@ https://www.instagram.com/hannahhanyahmed
     </div>
 
     <script>
+        // بيانات المدن والمناطق الكاملة
+        const citiesData = {
+            "Cairo": ["Abdin", "El Abaseya", "Al Azbakeya", "El Katameya", "Al Manial", "El Mokattam", "Dar El Salam", "El Basatin", "El-Gamaleya", "Al Sayeda Zeinab", "Helwan", "Maadi", "Masr El Qadima", "Qasr El Nil", "El Khalifa", "Torah", "Zamalek", "El Shorouk", "Badr City", "Ain Shams", "Madinaty", "Al Zaitoun", "Nasr City", "New Cairo", "Heliopolis", "Al Amiriyyah", "El Salam", "El Waily", "Al Sharabeya", "Al Marj", "Al Matariyyah", "El Nozha", "Hadaeq Al Qubbah", "Shobra", "Nile Corniche", "Cairo"],
+            "Giza": ["6th of October City", "El Sheikh Zayed City", "Al Ayyat", "Al Hawamidiyya", "Badrshein", "El Saf", "Al Omraneya", "Atfih", "Bahariya Oasis", "Pyramids Gardens", "Faisal", "Haram", "Abu an Numros", "Al Agouzah", "Al Warak", "Awsīm", "Boulaq Ad Dakrour", "Al Doqi", "Ard El Lewa", "Mohandessin", "Kirdasah", "Imbabah", "Monshaet El Kanater", "Giza"],
+            "Alexandria": ["Ad Dakhilah", "Amreya", "Borg El Arab", "Moharam Bek", "Bab Sharqi", "Sidi Gabir", "Al Attarin", "Mansheya", "Al Labban", "El Gomrok", "Port al Basal", "Karmus", "Montaza 2", "Alexandria"],
+            "Luxor": ["Luxor", "Armant", "Esna", "Al Qarnah"],
+            "Aswan": ["Aswan", "Kom Ombo", "Daraw", "Edfu"],
+            "Red Sea": ["Hurghada", "Ras Ghareb", "Safaga", "Quseer", "Marsa Alam"],
+            "Assiut": ["Abnub", "Abu Tig", "Al Badari", "El Ghanayem", "El Fateh", "El Quseyya", "Dayrout", "Sahel Selim", "Sidfa", "Asyut", "Manfalut", "Manqabad"],
+            "Sohag": ["Tima", "Tahta", "Juhaynah", "El Maragha", "Sohag", "Akhmim", "Saqultah", "Al Minshah", "Girga", "Al Balyana", "Dar El Salam", "El Usayrat"],
+            "Qena": ["Qena", "Qus", "Madinet Qaft", "Dishna", "Naqadah", "Nagaa Hammadi", "Farshut", "Abu Tesht"],
+            "Minya": ["El Idwa", "Maghagha", "Bani Mazar", "Matai", "Samalut", "Minya", "Abu Qurqas", "Mallawi", "Dayr Mawas"],
+            "Beni Suef": ["Al Wasta", "Nasser", "Beni Suef", "Ihnasya Al Madinah", "Biba", "Sumusta El Waqf", "El Fashn"],
+            "Fayoum": ["Tamiya", "Sinnuris", "Faiyum", "Atsa", "Ibsheway", "Youssef Al Seddik"],
+            "Beheira": ["Damanhour", "Kafr El Dawar", "Abu Hummus", "El Mahmoudeya", "Natrn Valley", "Al Noubareya", "Abu Al Matamir", "Housh Eissa", "Itay Al Barud", "Shubrakhit", "Rosetta", "Idku", "Badr", "Ad Dilinjat", "AR Rahmaniyyah", "Kom Hamada"],
+            "Kafr El Sheikh": ["Kafr El Shaikh", "Desouk", "Fowa", "Mutubas", "Baltim", "El Hamool", "Riyadh", "Biyala", "Qillin", "Sidi Salem"],
+            "Gharbia": ["Kafr Az Zayyat", "El Mahalla El Kubra", "Samannoud", "Basyoun", "El Santa", "Zefta", "Kotoor", "Tanta"],
+            "Dakahlia": ["Mansoura", "Aga", "Al Manzalah", "Belqas", "Dikirnis", "El Senbellawein", "Menyet El Nasr", "Mit Ghamr", "Shirbin", "Talkha"],
+            "Sharqia": ["Bilbeis", "Inshas", "Awlad Saqr", "El Husseiniya", "Dyarb Negm", "Faqus", "Kafr Saqr", "Mashtul as Suq", "Minya Al Qamh", "El Salheya El Qadima", "El Salheya El Gadida", "Tanis", "10th of Ramadan City", "Zagazig"],
+            "Qalyubia": ["Banha", "Al Khankah", "Al Obour City", "Al Qanatir Al Khayriyyah", "Shibin El Qanater", "Toukh", "Kafr Shukr", "Qalyub", "Shubra Al Khaymah"],
+            "Menoufia": ["Quwaysna", "Birkat as SAB", "El Sadat City", "El Shohada", "Tala", "Shebeen El Kom", "El Bagour", "Menouf", "Ashmoun"],
+            "Damietta": ["Faraskur", "Damietta", "New Damietta", "Kafr Saad", "El Zarqa", "Kafr Al Battikh", "Ras El Bar", "Izbat Al Burj"],
+            "Port Said": ["Port Said"],
+            "Matrouh": ["Marsa Matruh", "North Coast"],
+            "New Valley": ["Kharga", "Dakhla", "Farafra"],
+            "Ismailia": ["Ismailia"],
+            "Suez": ["Suez"],
+            "South Sinai": ["South Sinai Governorate", "Sharm El Sheikh", "Dahab"],
+            "North Sinai": ["North Sinai"]
+        };
+
         let currentMerchant = null;
         let processedOrders = [];
 
@@ -282,11 +325,46 @@ https://www.instagram.com/hannahhanyahmed
                     <p><strong>البريد الإلكتروني:</strong> ${currentMerchant.email}</p>
                     <p><strong>الهاتف:</strong> ${currentMerchant.phone}</p>
                     <p><strong>العنوان:</strong> ${currentMerchant.address}</p>
-                    <p><strong>المدينة:</strong> ${currentMerchant.city}</p>
+                    <p><strong>المدينة:</strong> ${getArabicCityName(currentMerchant.city)}</p>
                     <p><strong>المنطقة:</strong> ${currentMerchant.area}</p>
                     <p><strong>تاريخ التسجيل:</strong> ${new Date(currentMerchant.registrationDate).toLocaleDateString('ar-EG')}</p>
                 </div>
             `;
+        }
+
+        // تحويل أسماء المدن للعربية
+        function getArabicCityName(englishName) {
+            const cityMap = {
+                'Cairo': 'القاهرة',
+                'Giza': 'الجيزة', 
+                'Alexandria': 'الإسكندرية',
+                'Luxor': 'الأقصر',
+                'Aswan': 'أسوان',
+                'Red Sea': 'البحر الأحمر',
+                'Assiut': 'أسيوط',
+                'Sohag': 'سوهاج',
+                'Qena': 'قنا',
+                'Minya': 'المنيا',
+                'Beni Suef': 'بني سويف',
+                'Fayoum': 'الفيوم',
+                'Beheira': 'البحيرة',
+                'Kafr El Sheikh': 'كفر الشيخ',
+                'Gharbia': 'الغربية',
+                'Dakahlia': 'الدقهلية',
+                'Sharqia': 'الشرقية',
+                'Qalyubia': 'القليوبية',
+                'Menoufia': 'المنوفية',
+                'Damietta': 'دمياط',
+                'Port Said': 'بورسعيد',
+                'Matrouh': 'مطروح',
+                'New Valley': 'الوادي الجديد',
+                'Ismailia': 'الإسماعيلية',
+                'Suez': 'السويس',
+                'South Sinai': 'جنوب سيناء',
+                'North Sinai': 'شمال سيناء'
+            };
+            
+            return cityMap[englishName] || englishName;
         }
 
         // تبديل التبويبات
@@ -298,17 +376,67 @@ https://www.instagram.com/hannahhanyahmed
             document.getElementById(tabName + '-tab').classList.add('active');
         }
 
+        // إظهار رسالة
+        function showMessage(elementId, message, isSuccess = true) {
+            const messageElement = document.getElementById(elementId);
+            messageElement.textContent = message;
+            messageElement.style.display = 'block';
+            messageElement.style.background = isSuccess ? '#efe' : '#fee';
+            messageElement.style.color = isSuccess ? '#363' : '#c33';
+            messageElement.style.borderColor = isSuccess ? '#cfc' : '#fcc';
+            
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // تحديد المدينة تلقائياً من العنوان
+        function detectCityFromAddress(address) {
+            const addressLower = address.toLowerCase();
+            
+            for (const [city, areas] of Object.entries(citiesData)) {
+                // البحث في اسم المدينة
+                const arabicCityName = getArabicCityName(city).toLowerCase();
+                if (addressLower.includes(arabicCityName)) {
+                    return city;
+                }
+                
+                // البحث في المناطق
+                for (const area of areas) {
+                    if (addressLower.includes(area.toLowerCase())) {
+                        return city;
+                    }
+                }
+            }
+            
+            return 'Cairo'; // افتراضي
+        }
+
+        // تحديد المنطقة تلقائياً من العنوان
+        function detectAreaFromAddress(address, city) {
+            const addressLower = address.toLowerCase();
+            const cityAreas = citiesData[city] || [];
+            
+            for (const area of cityAreas) {
+                if (addressLower.includes(area.toLowerCase())) {
+                    return area;
+                }
+            }
+            
+            return 'منطقة العميل';
+        }
+
         // معالجة البيانات بالذكاء الاصطناعي
         function processWithAI() {
             const rawData = document.getElementById('rawData').value.trim();
             
             if (!rawData) {
-                alert('⚠️ يرجى إدخال البيانات الخام');
+                showMessage('errorMessage', '⚠️ يرجى إدخال البيانات الخام', false);
                 return;
             }
 
             if (!currentMerchant) {
-                alert('⚠️ يرجى تسجيل الدخول أولاً');
+                showMessage('errorMessage', '⚠️ يرجى تسجيل الدخول أولاً', false);
                 return;
             }
 
@@ -317,20 +445,21 @@ https://www.instagram.com/hannahhanyahmed
                 const orders = processRawData(rawData, currentMerchant);
                 
                 if (orders.length === 0) {
-                    alert('❌ لم يتم العثور على طلبات في البيانات المدخلة');
+                    showMessage('errorMessage', '❌ لم يتم العثور على طلبات في البيانات المدخلة', false);
                     return;
                 }
 
                 // عرض النتائج
                 displayProcessedOrders(orders);
                 document.getElementById('processingResult').style.display = 'block';
+                showMessage('successMessage', `✅ تم معالجة ${orders.length} طلب بنجاح`);
                 
             } catch (error) {
-                alert('❌ حدث خطأ في معالجة البيانات: ' + error.message);
+                showMessage('errorMessage', '❌ حدث خطأ في معالجة البيانات: ' + error.message, false);
             }
         }
 
-        // دالة معالجة البيانات الخام - محسنة وبدون بيانات وهمية
+        // معالجة البيانات الخام
         function processRawData(rawData, sender) {
             const lines = rawData.split('\n').filter(line => line.trim());
             const orders = [];
@@ -384,11 +513,17 @@ https://www.instagram.com/hannahhanyahmed
                 }
                 // اكتشاف الاسم (يجب أن يكون نص بدون أرقام وطويل enough)
                 else if (!order.receiverName && line.length > 2 && line.length < 50 && !/\d/.test(line) && !line.includes('http') && !line.includes('@')) {
-                    order.receiverName = line.replace('الاسم:', '').replace('الاسم', '').trim();
+                    order.receiverName = line.replace('الاسم:', '').replace('الاسم', '').replace(':', '').trim();
                 }
                 // اكتشاف العنوان (يجب أن يكون طويل ويحتوي على كلمات دالة)
-                else if (!order.receiverAddress && line.length > 10 && (line.includes('شارع') || line.includes('حي') || line.includes('منطقة') || line.includes('مدينة') || line.includes('عمارة') || line.includes('دور'))) {
-                    order.receiverAddress = line.replace('العنوان:', '').replace('العنوان', '').trim();
+                else if (!order.receiverAddress && line.length > 10 && (line.includes('شارع') || line.includes('حي') || line.includes('منطقة') || line.includes('مدينة') || line.includes('عمارة') || line.includes('دور') || line.includes('كمباوند'))) {
+                    order.receiverAddress = line.replace('العنوان:', '').replace('العنوان', '').replace(':', '').trim();
+                    
+                    // تحديد المدينة والمنطقة تلقائياً من العنوان
+                    if (order.receiverAddress) {
+                        order.receiverCity = detectCityFromAddress(order.receiverAddress);
+                        order.receiverArea = detectAreaFromAddress(order.receiverAddress, order.receiverCity);
+                    }
                 }
                 // اكتشاف الهاتف
                 else if (!order.receiverPhone && /\d{10,}/.test(line)) {
@@ -447,6 +582,8 @@ https://www.instagram.com/hannahhanyahmed
                     <p><strong>العميل:</strong> ${order.receiverName}</p>
                     <p><strong>الهاتف:</strong> ${order.receiverPhone}</p>
                     <p><strong>العنوان:</strong> ${order.receiverAddress}</p>
+                    <p><strong>المدينة:</strong> ${getArabicCityName(order.receiverCity)}</p>
+                    <p><strong>المنطقة:</strong> ${order.receiverArea}</p>
                     <p><strong>المنتج:</strong> ${order.productName}</p>
                     <p><strong>السعر:</strong> ${order.productPrice} جنيه</p>
                     ${order.instagram ? `<p><strong>انستجرام:</strong> ${order.instagram}</p>` : ''}
@@ -461,7 +598,7 @@ https://www.instagram.com/hannahhanyahmed
         // حفظ الطلبات المعالجة
         function saveProcessedOrders() {
             if (processedOrders.length === 0) {
-                alert('❌ لا توجد طلبات لحفظها');
+                showMessage('errorMessage', '❌ لا توجد طلبات لحفظها', false);
                 return;
             }
 
@@ -479,7 +616,7 @@ https://www.instagram.com/hannahhanyahmed
             const allOrders = [...savedOrders, ...newOrders];
             localStorage.setItem(`merchant_orders_${currentMerchant.id}`, JSON.stringify(allOrders));
 
-            alert(`✅ تم حفظ ${newOrders.length} طلب بنجاح`);
+            showMessage('successMessage', `✅ تم حفظ ${newOrders.length} طلب بنجاح`);
             loadSavedOrders();
             switchTab('orders');
         }
@@ -508,6 +645,7 @@ https://www.instagram.com/hannahhanyahmed
                     <h4>${order.receiverName} - ${order.productName}</h4>
                     <p><strong>الهاتف:</strong> ${order.receiverPhone} | <strong>السعر:</strong> ${order.productPrice} جنيه</p>
                     <p><strong>العنوان:</strong> ${order.receiverAddress}</p>
+                    <p><strong>المدينة:</strong> ${getArabicCityName(order.receiverCity)} - <strong>المنطقة:</strong> ${order.receiverArea}</p>
                     <p><strong>التاريخ:</strong> ${new Date(order.timestamp).toLocaleDateString('ar-EG')}</p>
                     <button class="btn btn-danger" onclick="deleteOrder('${order.id}')" style="padding: 5px 10px; font-size: 12px;">🗑️ حذف</button>
                 </div>
@@ -523,12 +661,13 @@ https://www.instagram.com/hannahhanyahmed
             
             localStorage.setItem(`merchant_orders_${currentMerchant.id}`, JSON.stringify(filteredOrders));
             loadSavedOrders();
+            showMessage('successMessage', '✅ تم حذف الطلب بنجاح');
         }
 
         // تصدير الطلبات
         function exportProcessedOrders() {
             if (processedOrders.length === 0) {
-                alert('❌ لا توجد طلبات للتصدير');
+                showMessage('errorMessage', '❌ لا توجد طلبات للتصدير', false);
                 return;
             }
 
@@ -552,8 +691,8 @@ https://www.instagram.com/hannahhanyahmed
                 
                 receiverName: order.receiverName,
                 receiverTelephone: order.receiverPhone,
-                receiverCity: "Cairo",
-                receiverArea: "منطقة العميل",
+                receiverCity: order.receiverCity,
+                receiverArea: order.receiverArea,
                 receiverAddress: order.receiverAddress,
                 receiverEmail: "",
                 
@@ -574,7 +713,7 @@ https://www.instagram.com/hannahhanyahmed
             a.download = `طلبات-${currentMerchant.storeName}-${new Date().toLocaleDateString('ar-EG')}.csv`;
             a.click();
             
-            alert(`✅ تم تصدير ${finalOrders.length} طلب بنجاح`);
+            showMessage('successMessage', `✅ تم تصدير ${finalOrders.length} طلب بنجاح`);
         }
 
         // تسجيل الخروج
